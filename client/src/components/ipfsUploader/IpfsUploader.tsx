@@ -1,4 +1,5 @@
 "use client"
+//for uploading files to ipfs (papers)
 import { useState, useEffect, ChangeEvent } from 'react';
 import { 
   Dialog, 
@@ -7,7 +8,7 @@ import {
   DialogTitle, 
   DialogDescription 
 } from "@/components/ui/dialog"
-import { Input } from './ui/input';
+import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 
@@ -70,7 +71,7 @@ export default function IPFSUploader({ onClose }: IPFSUploaderProps) {
         setUploadStatus('Upload successful!');
 
       onClose();
-      const backendResponse = await fetch('http://localhost:4000/api/patient/records', {
+      const backendResponse = await fetch('http://localhost:4000/api/records', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

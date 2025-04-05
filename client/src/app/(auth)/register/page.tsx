@@ -18,7 +18,6 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
-
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.STUDENT);
   const router = useRouter();
@@ -35,7 +34,7 @@ export default function SignupPage() {
         return <StudentSignupForm />;
       case UserRole.PROFESSOR:
         return <ProfessorSignupForm />;
-      case UserRole.COLLEGE_ADMIN:
+      case UserRole.ADMIN:
         return <CollegeAdminSignupForm />;
       default:
         return <StudentSignupForm />;

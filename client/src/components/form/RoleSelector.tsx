@@ -21,7 +21,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
   const roleIcons = {
     [UserRole.STUDENT]: <GraduationCap className="h-5 w-5" />,
     [UserRole.PROFESSOR]: <BookOpenCheckIcon className="h-5 w-5" />,
-    [UserRole.COLLEGE_ADMIN]: <ShieldCheck className="h-5 w-5" />,
+    [UserRole.ADMIN]: <ShieldCheck className="h-5 w-5" />,
   };
 
   return (

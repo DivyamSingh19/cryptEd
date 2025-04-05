@@ -6,7 +6,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { ethers } from "ethers";
 import { Input } from "@/components/ui/input";
-
+import axios from "axios";
 import {
   Form,
   FormControl,
@@ -69,44 +69,38 @@ const ProfessorSignupForm: React.FC = () => {
     }
   };
 
-  const onSubmit = async (values: z.infer<typeof professorFormSchema>) => {
-    try {
-      setIsLoading(true);
+ const onSubmit = async (values: z.infer<typeof professorFormSchema>) => {
+   try {
+     setIsLoading(true);
 
-      const response = await fetch(
-        "http://localhost:4000/api/user/register-professor",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: values.name,
-            email: values.email,
-            password: values.password,
-            university_id: values.university_id,
-            university_name: values.university_name,
-            department: values.department,
-            walletAddress: values.walletAddress,
-          }),
-        }
-      );
+     const response = await axios.post(
+       "http://localhost:4000/api/user/register/professor",
+       {
+         name: values.name,
+         email: values.email,
+         password: values.password,
+         university_id: values.university_id,
+         university_name: values.university_name,
+         department: values.department,
+         walletAddress: values.walletAddress,
+       }
+     );
 
-      const data = await response.json();
+     const data = response.data;
 
-      if (data.success) {
-        toast.success("Account created successfully");
-        router.push("/dashboard/professor");
-      } else {
-        toast.error(data.message || "Error in creating account");
-      }
-    } catch (error: any) {
-      console.error("Registration error:", error);
-      toast.error(`Error in creating account: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+     if (data.success) {
+       toast.success("Account created successfully");
+       router.push("/dashboard/professor");
+     } else {
+       toast.error(data.message || "Error in creating account");
+     }
+   } catch (error: any) {
+     console.error("Registration error:", error);
+     toast.error(error?.response?.data?.message || "Error in creating account");
+   } finally {
+     setIsLoading(false);
+   }
+ };
 
   return (
     <Form {...form}>

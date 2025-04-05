@@ -28,7 +28,7 @@ export type CollegeAdmin = {
 export enum UserRole {
   STUDENT = "student",
   PROFESSOR = "professor",
-  COLLEGE_ADMIN = "college_admin",
+  ADMIN = "college_admin",
 }
 
 // Add a base user type if needed for logged-in sessions or Redux

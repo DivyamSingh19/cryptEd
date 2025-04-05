@@ -26,16 +26,14 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
-import RoleSelector from "./RoleSelector"; 
+import RoleSelector from "./RoleSelector";
 import { Separator } from "../ui/separator";
 import LoaderSpinner from "./LoaderSpinner";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/userSlice";
 import { toast } from "sonner";
-import {UserRole} from '@/types'
-
-
-
+import { UserRole } from "@/types";
+import axios from "axios";
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(1, { message: "Password is required." }),
@@ -50,7 +48,6 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.STUDENT);
   const dispatch = useDispatch();
-
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -79,6 +76,7 @@ const LoginForm: React.FC = () => {
     }
   };
 
+
   const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
     try {
       setLoading(true);
@@ -87,27 +85,29 @@ const LoginForm: React.FC = () => {
       let endpoint = "";
       switch (selectedRole) {
         case UserRole.STUDENT:
-          endpoint = "/api/user/login-student";
+          endpoint = "/api/user/login/student";
           break;
         case UserRole.PROFESSOR:
-          endpoint = "/api/user/login-professor";
+          endpoint = "/api/user/login/professor";
           break;
-        case UserRole.COLLEGE_ADMIN:
-          endpoint = "/api/user/login-admin";
+        case UserRole.ADMIN:
+          endpoint = "/api/admin/login";
           break;
         default:
-          endpoint = "/api/user/login-student";
+          endpoint = "/api/user/login/student";
       }
 
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await axios.post(
+        `http://localhost:4000${endpoint}`,
+        values,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         localStorage.setItem("token", data.token);
@@ -127,7 +127,6 @@ const LoginForm: React.FC = () => {
           })
         );
 
-      
         switch (selectedRole) {
           case UserRole.STUDENT:
             router.push("/dashboard/student");
@@ -135,7 +134,7 @@ const LoginForm: React.FC = () => {
           case UserRole.PROFESSOR:
             router.push("/dashboard/professor");
             break;
-          case UserRole.COLLEGE_ADMIN:
+          case UserRole.ADMIN:
             router.push("/dashboard/admin");
             break;
           default:
@@ -146,9 +145,12 @@ const LoginForm: React.FC = () => {
           data.message || "Login failed. Please check your credentials."
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
-      setAuthError("An unexpected error occurred. Please try again later.");
+      setAuthError(
+        error?.response?.data?.message ||
+          "An unexpected error occurred. Please try again later."
+      );
     } finally {
       setLoading(false);
     }
@@ -228,7 +230,7 @@ const LoginForm: React.FC = () => {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                 <FormField
                   control={form.control}
                   name="walletAddress"
@@ -267,8 +269,8 @@ const LoginForm: React.FC = () => {
                       </div>
                     )}
                   </Button>
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <LoaderSpinner message="Logging in..." color="white" />

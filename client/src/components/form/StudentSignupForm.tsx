@@ -69,7 +69,7 @@ const StudentSignupForm: React.FC = () => {
       setIsLoading(true);
 
       const response = await fetch(
-        "http://localhost:4000/api/user/register-student", 
+        "http://localhost:4000/api/user/register/student", 
         {
           method: "POST",
           headers: {

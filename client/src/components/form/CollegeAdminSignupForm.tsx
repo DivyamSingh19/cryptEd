@@ -37,7 +37,7 @@ const CollegeAdminSignupForm: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.COLLEGE_ADMIN);
+  const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.ADMIN);
 
   const form = useForm<z.infer<typeof collegeAdminFormSchema>>({
     resolver: zodResolver(collegeAdminFormSchema),
@@ -91,11 +91,11 @@ const CollegeAdminSignupForm: React.FC = () => {
         }
       );
 
-      const data = response.data; 
+      const data = response.data;
 
       if (data.success) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", UserRole.COLLEGE_ADMIN);
+        localStorage.setItem("role", UserRole.ADMIN);
         localStorage.setItem("walletAddress", data.metaData.walletAddress);
         localStorage.setItem("email", data.metaData.email);
         localStorage.setItem("name", data.metaData.name);

@@ -19,8 +19,8 @@ async function main() {
     let newEnvData = "";
   
     const contractsToDeploy = [
-      { name: "ExamManager", args: [] },
-      // { name: "multiSig", args: [] },
+      // { name: "ExamManager", args: [] },
+      { name: "multiSig", args: [] },
       // { name: "ResultManager", args: [] },
       // { name: "SubmissionManager", args: [] },
       // { name: "zkSync", args: [] }

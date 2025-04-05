@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserRole } from "@/types"; 
+import { UserRole } from "@/types";
 
 interface UserState {
   id: string | undefined;
@@ -29,11 +29,20 @@ const userSlice = createSlice({
       state.walletAddress = action.payload.walletAddress;
     },
     clearUser: (state) => {
+      // Reset Redux state
       state.id = undefined;
       state.name = null;
       state.email = null;
       state.role = null;
       state.walletAddress = null;
+
+      // Optional: Clear localStorage here (or you can leave this to the component)
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+      localStorage.removeItem("role");
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("email");
+      localStorage.removeItem("name");
     },
   },
 });

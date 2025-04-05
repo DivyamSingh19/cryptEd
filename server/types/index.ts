@@ -3,3 +3,10 @@ export type admin = {
     email :string,
     password :string
 }
+
+export type Student={
+
+}
+export type Professor={
+    
+}

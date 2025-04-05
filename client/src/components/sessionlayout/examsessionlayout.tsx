@@ -18,7 +18,7 @@ const ExamSessionLayout = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalQuestions = 5;
 
-  // Camera state
+   
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [faceDetected, setFaceDetected] = useState(false);
@@ -124,7 +124,7 @@ const ExamSessionLayout = () => {
       }, 2000); // Check every 2 seconds
     };
 
-    // Function to draw video and detection results on canvas
+     
     const drawToCanvas = (faceDetected: boolean, warning?: string) => {
       if (!canvasRef.current || !videoRef.current) return;
 
@@ -142,7 +142,7 @@ const ExamSessionLayout = () => {
 
       // If face detected, draw a detection box
       if (faceDetected) {
-        // Simulate different face positions with some movement
+         
         const centerX = 320 + Math.sin(Date.now() / 1000) * 20;
         const centerY = 240 + Math.cos(Date.now() / 1000) * 10;
         const boxSize = 180;

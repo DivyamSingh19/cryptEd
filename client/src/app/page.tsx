@@ -6,7 +6,7 @@ import JobCard from "@/components/landing/JobCard";
 import { PartnerSlider } from "@/components/landing/PartnerSlider";
 import Testimonials from "@/components/landing/Testimonials";
 import { Button } from "@/components/ui/button";
-import Container from "@/components/ui/Container";
+import Container from "@/components/ui/Container"; 
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {

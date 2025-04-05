@@ -1,22 +1,22 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import LoginForm from "@/components/form/LoginForm";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    // Ensure this runs only in the client
-    if (typeof window !== "undefined") {
-      const role = localStorage.getItem("userRole");
-      if (role) {
-        router.push("/");
-      }
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   // Ensure this runs only in the client
+  //   if (typeof window !== "undefined") {
+  //     const role = localStorage.getItem("userRole");
+  //     if (role) {
+  //       router.push("/");
+  //     }
+  //   }
+  // }, [router]);
 
   return (
     <div

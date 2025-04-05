@@ -15,18 +15,18 @@ import StudentSignupForm from "@/components/form/StudentSignupForm";
 import Link from "next/link";
 import CollegeAdminSignupForm from "@/components/form/CollegeAdminSignupForm";
 import { Separator } from "@/components/ui/separator";
-import { useRouter } from "next/navigation";
+ 
 import { Button } from "@/components/ui/button";
 
 export default function SignupPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.STUDENT);
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      router.push("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("token")) {
+  //     router.push("/");
+  //   }
+  // }, []);
 
   const renderFormByRole = () => {
     switch (selectedRole) {

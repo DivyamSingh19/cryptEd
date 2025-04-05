@@ -78,7 +78,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold">CryptEd Dashboard</h1>
+                <h1 className="text-xl font-bold">Axoma Dashboard</h1>
               </div>
             </div>
             <div className="flex items-center">

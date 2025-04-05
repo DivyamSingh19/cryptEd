@@ -3,7 +3,7 @@ import "./globals.css";
 import StoreProvider from "@/components/store/StoreProvider"; 
 
 export const metadata: Metadata = {
-  title: "CryptEd",
+  title: "Axoma",
   description: "A platform for encrypted learning.",
 };
 

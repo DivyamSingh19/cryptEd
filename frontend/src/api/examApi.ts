@@ -1,213 +1,114 @@
 import axios from 'axios';
 
- 
-interface ExamData {
+const BASE_URL = 'http://localhost:3000';
+
+// Create Exam
+export async function createExam(examData: {
     examId: string;
     encryptionKey: string;
     startTime: string;
     endTime: string;
+}) {
+    const response = await axios.post(`${BASE_URL}/exam`, examData);
+    return response.data;
 }
 
-interface VerifierData {
-    verifierAddress: string;
+// Deactivate Exam
+export async function deactivateExam(examId: string) {
+    const response = await axios.put(`${BASE_URL}/exam/${examId}/deactivate`);
+    return response.data;
 }
 
-interface WalletData {
+// Add Verifier
+export async function addVerifier(verifierData: { verifierAddress: string }) {
+    const response = await axios.post(`${BASE_URL}/verifier`, verifierData);
+    return response.data;
+}
+
+// Remove Verifier
+export async function removeVerifier(verifierAddress: string) {
+    const response = await axios.delete(`${BASE_URL}/verifier/${verifierAddress}`);
+    return response.data;
+}
+
+// Authorize Wallet
+export async function authorizeWallet(walletData: {
     walletAddress: string;
     studentId: string;
+}) {
+    const response = await axios.post(`${BASE_URL}/wallet/authorize`, walletData);
+    return response.data;
 }
 
-interface SubmissionData {
+// Revoke Wallet Authorization
+export async function revokeWalletAuthorization(walletAddress: string) {
+    const response = await axios.delete(`${BASE_URL}/wallet/authorize/${walletAddress}`);
+    return response.data;
+}
+
+// Get Exam Encryption Key
+export async function getExamEncryptionKey(examId: string) {
+    const response = await axios.get(`${BASE_URL}/exam/${examId}/key`);
+    return response.data;
+}
+
+// Submit Exam
+export async function submitExam(submissionData: {
     examId: string;
     walletAddress: string;
     encryptedAnswers: string;
+}) {
+    const response = await axios.post(`${BASE_URL}/exam/submit`, submissionData);
+    return response.data;
 }
 
-interface ResultData {
+// Store Result
+export async function storeResult(resultData: {
     examId: string;
     walletAddress: string;
     score: number;
     verificationHash: string;
+}) {
+    const response = await axios.post(`${BASE_URL}/result`, resultData);
+    return response.data;
 }
 
-interface VerificationData {
+// Verify Result
+export async function verifyResult(verificationData: {
     examId: string;
     walletAddress: string;
     verificationHash: string;
+}) {
+    const response = await axios.post(`${BASE_URL}/result/verify`, verificationData);
+    return response.data;
 }
 
-// Base URL configuration
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-// Create axios instance with default config
-const api = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-// Create Exam
-export const createExam = async (examData: ExamData) => {
-    try {
-        const response = await api.post('/exam', examData);
-        return response.data;
-    } catch (error) {
-        console.error('Error creating exam:', error);
-        throw error;
-    }
-};
-
-// Deactivate Exam
-export const deactivateExam = async (examId: string) => {
-    try {
-        const response = await api.put(`/exam/${examId}/deactivate`);
-        return response.data;
-    } catch (error) {
-        console.error('Error deactivating exam:', error);
-        throw error;
-    }
-};
-
-// Add Verifier
-export const addVerifier = async (verifierData: VerifierData) => {
-    try {
-        const response = await api.post('/verifier', verifierData);
-        return response.data;
-    } catch (error) {
-        console.error('Error adding verifier:', error);
-        throw error;
-    }
-};
-
-// Remove Verifier
-export const removeVerifier = async (verifierAddress: string) => {
-    try {
-        const response = await api.delete(`/verifier/${verifierAddress}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error removing verifier:', error);
-        throw error;
-    }
-};
-
-// Authorize Wallet
-export const authorizeWallet = async (walletData: WalletData) => {
-    try {
-        const response = await api.post('/wallet/authorize', walletData);
-        return response.data;
-    } catch (error) {
-        console.error('Error authorizing wallet:', error);
-        throw error;
-    }
-};
-
-// Revoke Wallet Authorization
-export const revokeWalletAuthorization = async (walletAddress: string) => {
-    try {
-        const response = await api.delete(`/wallet/authorize/${walletAddress}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error revoking wallet authorization:', error);
-        throw error;
-    }
-};
-
-// Get Exam Encryption Key
-export const getExamEncryptionKey = async (examId: string) => {
-    try {
-        const response = await api.get(`/exam/${examId}/key`);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting exam encryption key:', error);
-        throw error;
-    }
-};
-
-// Submit Exam
-export const submitExam = async (submissionData: SubmissionData) => {
-    try {
-        const response = await api.post('/exam/submit', submissionData);
-        return response.data;
-    } catch (error) {
-        console.error('Error submitting exam:', error);
-        throw error;
-    }
-};
-
-// Store Result
-export const storeResult = async (resultData: ResultData) => {
-    try {
-        const response = await api.post('/result', resultData);
-        return response.data;
-    } catch (error) {
-        console.error('Error storing result:', error);
-        throw error;
-    }
-};
-
-// Verify Result
-export const verifyResult = async (verificationData: VerificationData) => {
-    try {
-        const response = await api.post('/result/verify', verificationData);
-        return response.data;
-    } catch (error) {
-        console.error('Error verifying result:', error);
-        throw error;
-    }
-};
-
 // Get Exam
-export const getExam = async (examId: string) => {
-    try {
-        const response = await api.get(`/exam/${examId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting exam:', error);
-        throw error;
-    }
-};
+export async function getExam(examId: string) {
+    const response = await axios.get(`${BASE_URL}/exam/${examId}`);
+    return response.data;
+}
 
 // Get Submission
-export const getSubmission = async (walletAddress: string, examId: string) => {
-    try {
-        const response = await api.get(`/submission/${walletAddress}/${examId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting submission:', error);
-        throw error;
-    }
-};
+export async function getSubmission(walletAddress: string, examId: string) {
+    const response = await axios.get(`${BASE_URL}/submission/${walletAddress}/${examId}`);
+    return response.data;
+}
 
 // Get Result
-export const getResult = async (walletAddress: string, examId: string) => {
-    try {
-        const response = await api.get(`/result/${walletAddress}/${examId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting result:', error);
-        throw error;
-    }
-};
+export async function getResult(walletAddress: string, examId: string) {
+    const response = await axios.get(`${BASE_URL}/result/${walletAddress}/${examId}`);
+    return response.data;
+}
 
 // Check Wallet Authorization
-export const isWalletAuthorized = async (walletAddress: string) => {
-    try {
-        const response = await api.get(`/wallet/authorized/${walletAddress}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error checking wallet authorization:', error);
-        throw error;
-    }
-};
+export async function isWalletAuthorized(walletAddress: string) {
+    const response = await axios.get(`${BASE_URL}/wallet/authorized/${walletAddress}`);
+    return response.data;
+}
 
 // Get Student ID from Wallet
-export const getStudentIdFromWallet = async (walletAddress: string) => {
-    try {
-        const response = await api.get(`/wallet/student/${walletAddress}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error getting student ID from wallet:', error);
-        throw error;
-    }
-}; 
+export async function getStudentIdFromWallet(walletAddress: string) {
+    const response = await axios.get(`${BASE_URL}/wallet/student/${walletAddress}`);
+    return response.data;
+} 

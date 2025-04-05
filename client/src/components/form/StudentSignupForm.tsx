@@ -21,6 +21,7 @@ import LoaderSpinner from "./LoaderSpinner";
 import Image from "next/image";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/userSlice";
+import axios from "axios";
 
 const studentFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -68,44 +69,52 @@ const StudentSignupForm: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(
-        "http://localhost:4000/api/user/register/student", 
+      const response = await axios.post(
+        "http://localhost:4000/api/auth/register-student",
         {
-          method: "POST",
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          walletAddress: values.walletAddress,
+          institution: "Default Institution",
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(values),
         }
       );
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", UserRole.STUDENT); 
+        localStorage.setItem("role", UserRole.STUDENT);
         localStorage.setItem("walletAddress", data.metaData.walletAddress);
         localStorage.setItem("email", data.metaData.email);
         localStorage.setItem("name", data.metaData.name);
         localStorage.setItem("id", data.id);
-        toast.success("Account created successfully");
 
-        router.push("/dashboard/student"); 
         dispatch(
           setUser({
-            id: data.token,
-            role: data.role,
+            id: data.id,
             name: data.metaData.name,
             email: data.metaData.email,
             walletAddress: data.metaData.walletAddress,
+            role: UserRole.STUDENT,
           })
         );
+
+        toast.success("Student registered successfully!");
+        router.push("/dashboard/student");
       } else {
-        toast.error("Error in creating account");
+        toast.error(data.message || "Registration failed");
       }
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast.error(`Error in creating account: ${error.message}`);
+      toast.error(
+        error?.response?.data?.message || "Error in creating account"
+      );
     } finally {
       setIsLoading(false);
     }

@@ -7,7 +7,7 @@ contract ExamManager {
     address public admin;
     mapping(address => bool) public verifiers;
     
-    // Exam structure
+     
     struct Exam {
         uint256 id;
         string ipfsHash;      // Hash of the encrypted exam on IPFS
@@ -18,7 +18,7 @@ contract ExamManager {
         bool isActive;        // Whether the exam is currently active
     }
     
-    // Submission structure
+     
     struct Submission {
         address wallet;       // Student's wallet address
         string studentId;     // Student ID from Web2.0 system

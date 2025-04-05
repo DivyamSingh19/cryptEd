@@ -200,7 +200,7 @@ async function professorRegistation(req: Request, res: Response) {
 
  
     const token = jwt.sign(
-      { id: newProfessor.id, email: newProfessor.email, role: "professor" },
+      { id: newProfessor.id, email: newProfessor.email  },
       JWT_SECRET,
       
     );
@@ -261,7 +261,7 @@ async function professorLogin(req: Request, res: Response) {
 
      
     const token = jwt.sign(
-      { id: professor.id, email: professor.email, role: "professor" },
+      { id: professor.id, email: professor.email  },
       JWT_SECRET,
        
     );

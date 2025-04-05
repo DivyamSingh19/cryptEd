@@ -12,3 +12,40 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  STUDENT
+  PROFESSOR
+  ADMIN
+}
+
+model Student {
+  id                 String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  email              String   @unique
+  name               String?
+  role               Role     @default(STUDENT)
+  wallet_address    String
+  schoolOrCollege    String
+}
+
+model Professor {
+  id                 String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  email              String   @unique
+  name               String?
+  role               Role     @default(PROFESSOR)
+  department         String
+  wallet_address     String
+  schoolOrCollege    String
+}
+
+model Admin {
+  id                 String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  email              String   @unique
+  name               String?
+  role               Role     @default(ADMIN)
+  wallet_address     String
+  organization       String
+}

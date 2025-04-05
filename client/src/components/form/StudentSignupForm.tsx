@@ -90,17 +90,17 @@ const StudentSignupForm: React.FC = () => {
       if (data.success) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", UserRole.STUDENT);
-        localStorage.setItem("walletAddress", data.metaData.walletAddress);
-        localStorage.setItem("email", data.metaData.email);
-        localStorage.setItem("name", data.metaData.name);
+        localStorage.setItem("walletAddress", data.walletAddress);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("name", data.name);
         localStorage.setItem("id", data.id);
 
         dispatch(
           setUser({
             id: data.id,
-            name: data.metaData.name,
-            email: data.metaData.email,
-            walletAddress: data.metaData.walletAddress,
+            name: data.name,
+            email: data.email,
+            walletAddress: data.walletAddress,
             role: UserRole.STUDENT,
           })
         );

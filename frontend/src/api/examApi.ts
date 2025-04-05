@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Types for our API
+ 
 interface ExamData {
     examId: string;
     encryptionKey: string;

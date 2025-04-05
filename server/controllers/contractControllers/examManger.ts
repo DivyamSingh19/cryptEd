@@ -2,19 +2,19 @@
 import { ethers } from "ethers";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
-
+import ExamManagerABI from "../../abi/ExamManager.json"
 dotenv.config();
  
-const ExamManagerABI = require('../abis/ExamManagerABI.json');
  
-const CONTRACT_ADDRESS = process.env.EXAM_MANAGER_CONTRACT_ADDRESS as string;
+ 
+const CONTRACT_ADDRESS = process.env.EXAMMANAGER_ADDRESS as string;
 const INFURA_API_KEY = process.env.INFURA_API_KEY as string;
-const PRIVATE_KEY = process.env.ADMIN_PRIVATE_KEY as string; 
+const PRIVATE_KEY = process.env.PRIVATE_KEY as string; 
 
  
 const provider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${INFURA_API_KEY}`);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-const examManagerContract = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI, wallet);
+const examManagerContract = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI.abi, wallet);
 
  
 interface ContractMethodOptions {
@@ -237,7 +237,7 @@ export const examController = {
       const studentProvider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${INFURA_API_KEY}`);
       const studentWalletPrivateKey = req.body.privateKey;  
       const studentWalletSigner = new ethers.Wallet(studentWalletPrivateKey, studentProvider);
-      const contractWithStudentSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI, studentWalletSigner);
+      const contractWithStudentSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI.abi, studentWalletSigner);
       
       try {
         const encryptionKey = await contractWithStudentSigner.getExamEncryptionKey(examId);
@@ -263,7 +263,7 @@ export const examController = {
       // Create a new contract instance with the student's wallet
       const studentProvider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${INFURA_API_KEY}`);
       const studentWalletSigner = new ethers.Wallet(studentWalletPrivateKey, studentProvider);
-      const contractWithStudentSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI, studentWalletSigner);
+      const contractWithStudentSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI.abi, studentWalletSigner);
       
       try {
         const tx = await contractWithStudentSigner.submitExam(examId, ipfsHash);
@@ -299,7 +299,7 @@ export const examController = {
       // Create a new contract instance with the verifier's wallet
       const verifierProvider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${INFURA_API_KEY}`);
       const verifierSigner = new ethers.Wallet(verifierKey, verifierProvider);
-      const contractWithVerifierSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI, verifierSigner);
+      const contractWithVerifierSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI.abi, verifierSigner);
       
       try {
         const tx = await contractWithVerifierSigner.storeResult(walletAddress, examId, ipfsHash, score);
@@ -333,7 +333,7 @@ export const examController = {
       // Create a new contract instance with the verifier's wallet
       const verifierProvider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${INFURA_API_KEY}`);
       const verifierSigner = new ethers.Wallet(verifierKey, verifierProvider);
-      const contractWithVerifierSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI, verifierSigner);
+      const contractWithVerifierSigner = new ethers.Contract(CONTRACT_ADDRESS, ExamManagerABI.abi, verifierSigner);
       
       try {
         const isValid = await contractWithVerifierSigner.verifyResult(walletAddress, examId, ipfsHash, score);

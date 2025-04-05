@@ -7,18 +7,16 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const AddProfessorsPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+ 
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setSuccessMessage("");
-    setErrorMessage("");
     setIsSubmitting(true);
 
     try {
@@ -33,21 +31,21 @@ const AddProfessorsPage = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Professor added successfully:", data);
-        setSuccessMessage("Professor added successfully!");
+        toast.success("Professor added successfully!"); 
         setName("");
         setEmail("");
       } else {
         const errorData = await response.json();
         console.error("Error adding professor:", errorData);
-        setErrorMessage(
-          `Error adding professor: ${
-            errorData.message || "Something went wrong"
+        toast.error(
+          `Failed to add professor: ${
+            errorData.message || "Something went wrong."
           }`
         );
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setErrorMessage("Failed to connect to the server.");
+      toast.error("Failed to connect to the server.");
     } finally {
       setIsSubmitting(false);
     }
@@ -72,17 +70,6 @@ const AddProfessorsPage = () => {
           <CardTitle>Professor Details</CardTitle>
         </CardHeader>
         <CardContent>
-          {successMessage && (
-            <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-md">
-              {successMessage}
-            </div>
-          )}
-          {errorMessage && (
-            <div className="mb-4 p-4 bg-red-50 text-red-700 rounded-md">
-              {errorMessage}
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">

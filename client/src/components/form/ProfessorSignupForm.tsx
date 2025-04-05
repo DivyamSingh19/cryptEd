@@ -19,6 +19,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import LoaderSpinner from "./LoaderSpinner";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/userSlice";
+import { UserRole } from "@/types";
 
 const professorFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -36,6 +39,7 @@ const professorFormSchema = z.object({
 
 const ProfessorSignupForm: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof professorFormSchema>>({
@@ -69,38 +73,62 @@ const ProfessorSignupForm: React.FC = () => {
     }
   };
 
- const onSubmit = async (values: z.infer<typeof professorFormSchema>) => {
-   try {
-     setIsLoading(true);
+  const onSubmit = async (values: z.infer<typeof professorFormSchema>) => {
+    try {
+      setIsLoading(true);
 
-     const response = await axios.post(
-       "http://localhost:4000/api/user/register/professor",
-       {
-         name: values.name,
-         email: values.email,
-         password: values.password,
-         university_id: values.university_id,
-         university_name: values.university_name,
-         department: values.department,
-         walletAddress: values.walletAddress,
-       }
-     );
+      const response = await axios.post(
+        "http://localhost:4000/api/auth/register-professor",
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+          institution: values.university_name,
+          walletAddress: values.walletAddress,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-     const data = response.data;
+      const data = response.data;
 
-     if (data.success) {
-       toast.success("Account created successfully");
-       router.push("/dashboard/professor");
-     } else {
-       toast.error(data.message || "Error in creating account");
-     }
-   } catch (error: any) {
-     console.error("Registration error:", error);
-     toast.error(error?.response?.data?.message || "Error in creating account");
-   } finally {
-     setIsLoading(false);
-   }
- };
+      if (data.success) {
+        // Store user data in localStorage
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("role", UserRole.PROFESSOR);
+        localStorage.setItem("walletAddress", data.data.walletAddress);
+        localStorage.setItem("email", data.data.email);
+        localStorage.setItem("name", data.data.name);
+        localStorage.setItem("id", data.data.id);
+
+        // Update Redux state
+        dispatch(
+          setUser({
+            id: data.data.id,
+            name: data.data.name,
+            email: data.data.email,
+            walletAddress: data.data.walletAddress,
+            role: UserRole.PROFESSOR,
+          })
+        );
+
+        toast.success("Professor account created successfully!");
+        router.push("/dashboard/professor");
+      } else {
+        toast.error(data.message || "Error in creating account");
+      }
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error(
+        error?.response?.data?.message || "Error in creating account"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Form {...form}>

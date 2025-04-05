@@ -34,7 +34,6 @@ import { toast } from "sonner";
 import { UserRole } from "@/types";
 import axios from "axios";
 
-
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(1, { message: "Password is required." }),
@@ -85,21 +84,25 @@ const LoginForm: React.FC = () => {
       let endpoint = "";
       switch (selectedRole) {
         case UserRole.STUDENT:
-          endpoint = "/api/user/login/student";
+          endpoint = "/api/auth/login-student";
           break;
         case UserRole.PROFESSOR:
-          endpoint = "/api/user/login/professor";
+          endpoint = "/api/auth/login-professor";
           break;
         case UserRole.ADMIN:
           endpoint = "/api/admin/login";
           break;
         default:
-          endpoint = "/api/user/login/student";
+          endpoint = "/api/auth/login-student";
       }
 
       const response = await axios.post(
         `http://localhost:4000${endpoint}`,
-        values,
+        {
+          email: values.email,
+          password: values.password,
+          walletAddress: values.walletAddress,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -110,22 +113,27 @@ const LoginForm: React.FC = () => {
       const data = response.data;
 
       if (data.success) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("id", data.id);
+        localStorage.setItem("token", data.data?.token || data.token);
         localStorage.setItem("role", selectedRole);
-        localStorage.setItem("walletAddress", data.metaData.walletAddress);
-        localStorage.setItem("email", data.metaData.email);
-        localStorage.setItem("name", data.metaData.name);
+        localStorage.setItem(
+          "walletAddress",
+          data.data?.walletAddress || values.walletAddress
+        );
+        localStorage.setItem("email", data.data?.email || values.email);
+        localStorage.setItem("name", data.data?.name || "");
+        localStorage.setItem("id", data.data?.id || "");
 
         dispatch(
           setUser({
-            id: data.token,
+            id: data.data?.id || data.token,
             role: selectedRole,
-            name: data.metaData.name,
-            email: data.metaData.email,
-            walletAddress: data.metaData.walletAddress,
+            name: data.data?.name || "",
+            email: data.data?.email || values.email,
+            walletAddress: data.data?.walletAddress || values.walletAddress,
           })
         );
+
+        toast.success("Login successful!");
 
         switch (selectedRole) {
           case UserRole.STUDENT:
@@ -151,6 +159,7 @@ const LoginForm: React.FC = () => {
         error?.response?.data?.message ||
           "An unexpected error occurred. Please try again later."
       );
+      toast.error(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }

@@ -75,7 +75,7 @@ const CollegeAdminSignupForm: React.FC = () => {
       setIsLoading(true);
 
       const response = await axios.post(
-        "http://localhost:4000/login",
+        "http://localhost:4000/api/admin/register",
         {
           name: values.name,
           email: values.email,
@@ -103,21 +103,24 @@ const CollegeAdminSignupForm: React.FC = () => {
 
         dispatch(
           setUser({
-            id: data.token,
-            role: data.role,
+            id: data.id,
             name: data.metaData.name,
             email: data.metaData.email,
             walletAddress: data.metaData.walletAddress,
+            role: UserRole.ADMIN,
           })
         );
 
-        toast.success("Admin registered successfully!");
+        toast.success("College Admin registered successfully!");
         router.push("/dashboard/college-admin");
       } else {
-        toast.error("Signup failed", data.message);
+        toast.error(data.message || "Registration failed");
       }
     } catch (error: any) {
-      toast.error(`Registration error: ${error.message}`);
+      console.error("Registration error:", error);
+      toast.error(
+        error?.response?.data?.message || "Error in creating account"
+      );
     } finally {
       setIsLoading(false);
     }

@@ -5,7 +5,7 @@ interface UserState {
   id: string | undefined;
   name: string | null;
   email: string | null | undefined;
-  role: UserRole | null;
+  role?: UserRole | null;
   walletAddress: string | null;
 }
 

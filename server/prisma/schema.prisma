@@ -18,22 +18,22 @@ datasource db {
 model Student {
   id                 String   @id @default(uuid())
    
-  email              String?   @unique
-  name               String?
-  password           String?
-  walletAddress      String?    @unique
-  institution        String?
+  email              String   @unique
+  name               String
+  password           String
+  walletAddress      String    @unique
+  institution        String
 }
 
 model Professor {
   id                 String   @id @default(uuid())
  
-  email              String?   @unique
-  name               String?
+  email              String   @unique
+  name               String
    
-  password           String? 
-  walletAddress      String?  @unique
-  institution        String?
+  password           String
+  walletAddress      String  @unique
+  institution        String
 }
 
  

@@ -42,7 +42,7 @@ async function studentLogin(req: Request, res: Response) {
 
   
     const token = jwt.sign(
-      { id: student.id, email: student.email, role: "student" },
+      { id: student.id, email: student.email},
       JWT_SECRET,
        
     );
@@ -121,9 +121,9 @@ async function studentRegistration(req: Request, res: Response) {
 
   
     const token = jwt.sign(
-      { id: newStudent.id, email: newStudent.email, role: "student" },
+      { id: newStudent.id, email: newStudent.email},
       JWT_SECRET,
-      { expiresIn: "24h" }
+    
     );
 
  

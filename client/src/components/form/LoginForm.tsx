@@ -6,7 +6,6 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ethers } from "ethers";
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -34,6 +33,8 @@ import { setUser } from "@/redux/userSlice";
 import { toast } from "sonner";
 import { UserRole } from "@/types";
 import axios from "axios";
+
+
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z.string().min(1, { message: "Password is required." }),
@@ -75,7 +76,6 @@ const LoginForm: React.FC = () => {
       toast.error("Failed to connect to MetaMask.");
     }
   };
-
 
   const onSubmit = async (values: z.infer<typeof loginFormSchema>) => {
     try {
@@ -158,14 +158,14 @@ const LoginForm: React.FC = () => {
 
   return (
     <Card className="relative w-full max-w-3xl mx-auto">
-      <div className="absolute -top-[136px] left-[70%]">
+      {/* <div className="absolute -top-[136px] left-[70%]">
         <Image
           src="/assets/logindoc.svg"
           width={150}
           height={150}
           alt="Login Illustration"
         />
-      </div>
+      </div> */}
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>

@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 
 export default function Navbar() {
     return (
-        <header className="sticky top-5 w-full max-w-7xl mx-auto rounded-full flex bg-background z-100 shadow-md border border-accent gap-6 items-center justify-between p-4 border-b border-b-accent">
+        <header className="sticky top-0 w-full max-w-7xl mx-auto rounded-full flex   z-100 shadow-md border border-accent gap-6 items-center justify-between p-4 border-b border-b-accent">
          
             <Link href="/" className="flex items-center gap-2">
                 

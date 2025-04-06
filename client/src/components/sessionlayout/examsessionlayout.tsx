@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   AlertCircle,
   Camera,
@@ -6,101 +6,41 @@ import {
   Send,
   CheckCircle,
   AlertTriangle,
-   
+  Keyboard,
+  LogOut,
 } from "lucide-react";
-import { useRouter } from "next/router";
-import { withRouter } from "next/router";
- 
 
 const ExamSessionLayout = ({ router }) => {
-   
+  // Add router check to prevent issues during SSR
   const [isRouterReady, setIsRouterReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3600); // 1 hour
   const [currentQuestion, setCurrentQuestion] = useState(1);
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showWarning, setShowWarning] = useState(false);
-  const contentRef = useRef(null);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const totalQuestions = 5;
 
+   
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [faceDetected, setFaceDetected] = useState(false);
   const [faceWarning, setFaceWarning] = useState("");
-  const [proctorEvents, setProctorEvents] = useState([]);
-  const [tabSwitched, setTabSwitched] = useState(false);
-  const [keyboardActivity, setKeyboardActivity] = useState(false);
-  const keyboardActivityTimeout = useRef(null);
-
-  // Check if router is ready
-  useEffect(() => {
-    if (router && router.isReady) {
-      setIsRouterReady(true);
-    }
-  }, [router]);
-
-  // Helper function to add proctor events
-  const addProctorEvent = useCallback(
-    (event, severity) => {
-      setProctorEvents((prev) => [
-        { time: new Date().toLocaleTimeString(), event, severity },
-        ...prev.slice(0, 9), // Keep most recent 10 events
-      ]);
-    },
-    [setProctorEvents]
-  );
-
-  const handleAnswerChange = (questionId, value) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
-  };
-
-  // Define handleSubmit before it's used in useEffect
-  const handleSubmit = useCallback(() => {
-    // Submit logic
-    console.log("Submitting answers:", answers);
-    console.log("Proctoring Events on Submit:", proctorEvents);
-    console.log("Tab Switched on Submit:", tabSwitched);
-    console.log("Keyboard Activity on Submit:", keyboardActivity);
-    alert("Exam submitted successfully!");
-    // In a real application, you would send the answers and proctoring data to the server
-
-    // Only navigate if router is ready
-    if (isRouterReady) {
-      router.push("/dashboard/student/results"); // Redirect to results page after submission
-    }
-  }, [
-    answers,
-    proctorEvents,
-    router,
-    tabSwitched,
-    keyboardActivity,
-    isRouterReady,
-  ]);
-
-  // Function to handle immediate exam termination
-  const handleExamTermination = useCallback(() => {
-    addProctorEvent(
-      "Exam terminated due to suspicious activity (tab switch)",
-      "error"
-    );
-    alert("Your exam session has been terminated due to switching tabs.");
-
-    // Only navigate if router is ready
-    if (isRouterReady) {
-      router.push("/dashboard/student"); // Redirect to a safe area
-    }
-  }, [addProctorEvent, router, isRouterReady]);
+  const [proctorEvents, setProctorEvents] = useState<
+    Array<{
+      time: string;
+      event: string;
+      severity: "info" | "warning" | "error";
+    }>
+  >([]);
 
   // Timer logic
   useEffect(() => {
-    if (timeLeft <= 0) {
-      handleSubmit();
-      return;
-    }
+    if (timeLeft <= 0) return;
     const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, handleSubmit]);
+  }, [timeLeft]);
 
   // Low time warning
   useEffect(() => {
@@ -112,10 +52,8 @@ const ExamSessionLayout = ({ router }) => {
 
   // Initialize continuous webcam feed
   useEffect(() => {
-    if (!isRouterReady) return; // Don't initialize camera until router is ready
-
-    let stream = null;
-    let faceCheckInterval = null;
+    let stream: MediaStream | null = null;
+    let faceCheckInterval: NodeJS.Timeout | null = null;
 
     const initializeCamera = async () => {
       try {
@@ -190,7 +128,8 @@ const ExamSessionLayout = ({ router }) => {
       }, 2000); // Check every 2 seconds
     };
 
-    const drawToCanvas = (faceDetected, warning) => {
+     
+    const drawToCanvas = (faceDetected: boolean, warning?: string) => {
       if (!canvasRef.current || !videoRef.current) return;
 
       const ctx = canvasRef.current.getContext("2d");
@@ -207,6 +146,7 @@ const ExamSessionLayout = ({ router }) => {
 
       // If face detected, draw a detection box
       if (faceDetected) {
+         
         const centerX = 320 + Math.sin(Date.now() / 1000) * 20;
         const centerY = 240 + Math.cos(Date.now() / 1000) * 10;
         const boxSize = 180;
@@ -246,6 +186,17 @@ const ExamSessionLayout = ({ router }) => {
       );
     };
 
+    // Helper function to add proctor events
+    const addProctorEvent = (
+      event: string,
+      severity: "info" | "warning" | "error"
+    ) => {
+      setProctorEvents((prev) => [
+        { time: new Date().toLocaleTimeString(), event, severity },
+        ...prev.slice(0, 9), // Keep most recent 10 events
+      ]);
+    };
+
     // Initialize camera
     initializeCamera();
 
@@ -258,65 +209,45 @@ const ExamSessionLayout = ({ router }) => {
         clearInterval(faceCheckInterval);
       }
     };
-  }, [addProctorEvent, isRouterReady]);
+  }, []);
 
-  // Visibility change detector (Tab switching)
+  // Visibility change detector
   useEffect(() => {
-    if (!isRouterReady) return; // Skip if router isn't ready
-
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        setTabSwitched(true);
-        addProctorEvent("Student switched tabs/window", "error");
-        // Optionally, you can immediately submit the exam or navigate away
-        // handleSubmit();
-        // router.push('/dashboard/student/exam-ended');
-      } else {
-        // Optionally, log when the student returns
-        addProctorEvent("Student returned to exam window", "info");
+        // Log or handle the student leaving the page
+        setProctorEvents((prev) => [
+          {
+            time: new Date().toLocaleTimeString(),
+            event: "Student left exam window",
+            severity: "error",
+          },
+          ...prev.slice(0, 9),
+        ]);
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [router, addProctorEvent, handleSubmit, isRouterReady]);
+  }, []);
 
-  // Keyboard activity tracker
-  useEffect(() => {
-    if (!isRouterReady) return; // Skip if router isn't ready
-
-    const handleKeyDown = () => {
-      setKeyboardActivity(true);
-      addProctorEvent("Keyboard activity detected", "info");
-
-      if (keyboardActivityTimeout.current) {
-        clearTimeout(keyboardActivityTimeout.current);
-      }
-      keyboardActivityTimeout.current = setTimeout(() => {
-        setKeyboardActivity(false);
-      }, 3000); // Consider keyboard inactive after 3 seconds of no press
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [addProctorEvent, isRouterReady]);
-
-  // Conditionally trigger exam termination
-  useEffect(() => {
-    if (tabSwitched && isRouterReady) {
-      // You might want to add a delay or a warning before immediate termination
-      setTimeout(handleExamTermination, 1000); // Terminate after 1 second
-      // Alternatively, you could just log the event and let the professor review
-    }
-  }, [tabSwitched, handleExamTermination, isRouterReady]);
-
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs
       .toString()
       .padStart(2, "0")}`;
+  };
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }));
+  };
+
+  const handleSubmit = () => {
+    // Submit logic
+    console.log("Submitting answers:", answers);
+    alert("Exam submitted successfully!");
   };
 
   // Reset face detection warnings
@@ -377,18 +308,6 @@ const ExamSessionLayout = ({ router }) => {
     },
   ];
 
-  // If router isn't ready, show a loading indicator
-  if (!isRouterReady) {
-    return (
-      <div className="flex items-center justify-center h-screen w-screen bg-slate-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 font-medium">Loading exam session...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="relative w-screen h-screen bg-slate-50 overflow-hidden">
       {/* Header with Timer and Exam Info */}
@@ -441,17 +360,6 @@ const ExamSessionLayout = ({ router }) => {
             >
               ×
             </button>
-          </div>
-        )}
-
-        {/* Tab Switch Warning */}
-        {tabSwitched && (
-          <div className="w-full max-w-md bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded shadow-md flex items-center">
-            <AlertTriangle className="w-5 h-5 mr-2" />
-            <span>
-              Warning: Tab switched detected. Exam might be terminated.
-            </span>
-            {/* You might not want a close button here if termination is immediate */}
           </div>
         )}
       </div>
@@ -746,5 +654,4 @@ const ExamSessionLayout = ({ router }) => {
   );
 };
 
-
-export default withRouter(ExamSessionLayout);
+export default ExamSessionLayout;

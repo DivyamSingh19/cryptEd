@@ -1,0 +1,4 @@
+{
+    "distance_threshold": 0.6,
+    "max_verification_attempts": 5
+  }

@@ -6,14 +6,14 @@ import {
   Send,
   CheckCircle,
   AlertTriangle,
-  Keyboard,
-  LogOut,
+   
 } from "lucide-react";
 import { useRouter } from "next/router";
 import { withRouter } from "next/router";
+ 
 
 const ExamSessionLayout = ({ router }) => {
-  // Add router check to prevent issues during SSR
+   
   const [isRouterReady, setIsRouterReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3600); // 1 hour
   const [currentQuestion, setCurrentQuestion] = useState(1);
